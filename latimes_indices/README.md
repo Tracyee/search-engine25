@@ -1,0 +1,1 @@
+This is the directory where the metadata, the indices, the DOCNO <--> internal ID mapping, the lexicon, and the document lengths are stored.
