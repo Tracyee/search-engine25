@@ -30,7 +30,11 @@ def bm25(tokens, lexicon, invIndex, mapping, docLens):
         tfQuery = ((k2 + 1) * qf) / (k2 + qf)
 
         # Calculate idf
-        termID = lexicon[term]
+        try:
+            termID = lexicon[term]
+        except KeyError:
+            print("WARNING: token '{}' not found in lexicon".format(term))
+            continue
         posting = invIndex[termID]
         N = len(mapping)
         n = len(posting) // 2  # number of documents with term i in them
