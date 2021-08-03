@@ -18,3 +18,6 @@ For evaluating a set of result files given a test collection, run the `evaluatio
 For performing BM25 on a set of queries, run the `BM25.py` as follows. 
 
 ```Usage: BM25 <path to the index directory> <the queries file> <output file name> <stemming? true or false>```
+
+To run the search engine, just use the following command and follow the prompts.
+```python searchEngine.py```
