@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 import sys
 import os
 import re
+import heapq
 import pickle
 from collections import Counter
 from month import month
@@ -204,3 +205,54 @@ def buildIndex(raw, lexicon, invIndex, doc_lens, stem):
     token_ids = tokens2ids(tokens, lexicon)
     word_counts = countWords(token_ids)
     addToPosting(word_counts, buildIndex.docID, invIndex)
+
+
+def queryBiasedSnippet(query: str, strBuf: str):
+    # strip tags and keep texts in only "TEXT", "HEADLINE", and "GRAPHIC" tags
+    text = xmlParser(strBuf)
+    # split text on stops: period, question mark, and exclamation mark
+    sentences = re.split(r"(?<=[.?!][ \'\"])", text)
+    # throw out sentences with < 5 words and remove any preceding and trailing whitespaces
+    sentences = [s.lstrip() for s in sentences if len(s.split()) >= 5]
+    # create a Max Heap to store the sentences by their scores
+    maxHeap = []
+    heapq.heapify(maxHeap)
+    for i, sentence in enumerate(sentences):
+        sentenceTokens = tokenize(sentence, False)
+        queryTokens = tokenize(query, False)
+        # since there is no <h> tags in our document collection, h is always zero
+        h = 0
+        # Let l be 2 if S is the first sentence, 1 if the second, and 0 otherwise
+        l = 2 if i == 0 else (1 if i == 1 else 0)
+        # Let c be the number of w_i that are query terms; including repetitions
+        c = sum([sentenceTokens.count(q) for q in queryTokens])
+        # Let d be the number of distinct query terms that match some w_i
+        d = sum([1 if q in sentenceTokens else 0 for q in queryTokens])
+        # Identify the longest contiguous run of query terms in S, say w_j ... W_j+k
+        k, tmp, contiguous = 0, 0, False
+
+        for t in sentenceTokens:
+            if t in queryTokens:
+                if contiguous:
+                    tmp += 1
+                else:
+                    contiguous = True
+                    tmp = 1
+                k = max(tmp, k)
+            else:
+                contiguous = False
+        # the sentence score is a weighted combination of c, d, k, h, and l
+        score = 0.1 * h + 0.1 * l + 0.3 * c + 0.2 * d + 0.3 * k
+        # since heapq is a Min Heap, push the minus score to simulate a Max Heap
+        heapq.heappush(maxHeap, (-score, sentence))
+
+    snippet = ""
+    cnt = 0
+    while maxHeap:
+        if cnt > 1:  # keep the summary short
+            break
+        _, sentence = heapq.heappop(maxHeap)
+        snippet += sentence
+        cnt += 1
+    return snippet
+
