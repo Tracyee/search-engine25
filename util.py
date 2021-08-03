@@ -212,7 +212,7 @@ def queryBiasedSnippet(query: str, strBuf: str):
     text = xmlParser(strBuf)
     # split text on stops: period, question mark, and exclamation mark
     sentences = re.split(r"(?<=[.?!][ \'\"])", text)
-    # throw out sentences with < 5 words and remove any preceding and trailing whitespaces
+    # throw out sentences with < 5 words and remove any preceding whitespaces
     sentences = [s.lstrip() for s in sentences if len(s.split()) >= 5]
     # create a Max Heap to store the sentences by their scores
     maxHeap = []
