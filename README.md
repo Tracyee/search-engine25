@@ -1,7 +1,5 @@
-<<<<<<< HEAD
 # search-engine25
-=======
-# MSCI 541/720 - HW5 - Yi Cai
+
 
 The programs are tested on Ubuntu 20.04 with Python 3.8.8 built in. Some importance packages
 include `pickle`, `gzip`, and `datetime`, which can be installed with `pip install XXX`.
@@ -24,4 +22,4 @@ For performing BM25 on a set of queries, run the `BM25.py` as follows.
 
 To run the search engine, just use the following command and follow the prompts.
 ```python searchEngine.py```
->>>>>>> r1remote/main
+
