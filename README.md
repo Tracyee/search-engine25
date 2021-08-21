@@ -23,3 +23,6 @@ For performing BM25 on a set of queries, run the `BM25.py` as follows.
 To run the search engine, just use the following command and follow the prompts.
 ```python searchEngine.py```
 
+To run the GUI version of the search engine, just use the following command.
+```python GUI.py```
+
